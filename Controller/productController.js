@@ -6,40 +6,44 @@ const ApiFeatures = require("../utils/apiFeatures.js");
 
 //Create Product -- Admin
 exports.createProduct = catchAsyncErrors(async (req, res, next) => {
-  console.log("hbs");
-  // let images = [];
-  // if (typeof req.body.images === "string") {
-  //   images.push(req.body.images);
-  // } else {
-  //   images = req.body.images;
-  // }
+  const response = await fetch("https://fakestoreapi.com/products");
+  const zz = await response.json();
 
-  const imagesLinks = [];
+  const stocks = [88, 66, 27, 873, 27, 3, 10, 3, 4, 7];
+  const brands = ["JSG", "SHG", "YFH", "GSY", "TVS", "SBU", "YWBJ"];
+  const discounts = [5, 6, 40, 20, 10, 99, 50, 25, 79, 49];
+  const products = [];
+  for (const key of zz) {
+    const imageLinks = key.image;
+    const stock = stocks[Math.floor(Math.random() * stocks.length)];
+    const brand = brands[Math.floor(Math.random() * brands.length)];
+    const dis = discounts[Math.floor(Math.random() * discounts.length)];
 
-  // for (let i = 0; i < images.length; i++) {
-  //   const result = await cloudinary.v2.uploader.upload(images[i], {
-  //     folder: "products",
-  //   });
-
-  //   imagesLinks.push({
-  //     public_id: result.public_id,
-  //     url: result.secure_url,
-  //   });
-  // }
-
-  req.body.images = imagesLinks;
-  const product = await Product.create(req.body);
+    const obj = {
+      title: key.title,
+      description: key.description,
+      price: key.price,
+      countRatings: key.rating.count,
+      ratings: key.rating.rate,
+      images: imageLinks,
+      category: key.category,
+      Stock: stock,
+      brand: brand,
+      discount: dis,
+    };
+    products.push(await Product.create(obj));
+  }
 
   res.status(201).json({
     success: true,
-    product,
+    products,
   });
 });
 
 //Get All Products
 exports.getAllProducts = catchAsyncErrors(async (req, res) => {
   const productsCount = await Product.countDocuments();
-  const resultPerPage = 8;
+  const resultPerPage = 20;
   const features = new ApiFeatures(Product.find(), req.query).search().filter();
 
   let products = await features.query;
