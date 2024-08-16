@@ -7,7 +7,7 @@ class ApiFeatures {
   search() {
     const keyword = this.queryStr.keyword
       ? {
-          name: {
+          title: {
             $regex: this.queryStr.keyword,
             $options: "i",
           },
@@ -21,13 +21,20 @@ class ApiFeatures {
     const queryCopy = { ...this.queryStr };
 
     // Removing some fields for category
-    const removeFields = ["keyword", "page", "limit"];
+    const removeFields = ["keyword", "page", "limit", "brands"];
     removeFields.forEach((key) => delete queryCopy[key]);
 
     // Filter for Price
     let queryStr = JSON.stringify(queryCopy);
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (key) => `$${key}`);
     this.query = this.query.find(JSON.parse(queryStr));
+
+    // Filter for Brands
+    if (this.queryStr.brands) {
+      const brands = this.queryStr.brands.split(",");
+      this.query = this.query.find({ brand: { $in: brands } });
+    }
+
     return this;
   }
 

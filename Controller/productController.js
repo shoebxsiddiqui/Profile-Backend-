@@ -10,19 +10,32 @@ exports.createProduct = catchAsyncErrors(async (req, res, next) => {
   const zz = await response.json();
 
   const stocks = [88, 66, 27, 873, 27, 3, 10, 3, 4, 7];
-  const brands = ["JSG", "SHG", "YFH", "GSY", "TVS", "SBU", "YWBJ"];
-  const discounts = [5, 6, 40, 20, 10, 99, 50, 25, 79, 49];
+  const brands = [
+    "ZenithWare",
+    "NovaTrend",
+    "AeroFusion",
+    "PixelPeak",
+    "EchoLux",
+    "QuantumEdge",
+    "VortexVibe",
+    "StellarLine",
+    "LuxeFusion",
+    "NebulaNex",
+  ];
+  const discounts = [5, 0, 10, 25, 50, 0, 0];
   const products = [];
   for (const key of zz) {
     const imageLinks = key.image;
     const stock = stocks[Math.floor(Math.random() * stocks.length)];
     const brand = brands[Math.floor(Math.random() * brands.length)];
     const dis = discounts[Math.floor(Math.random() * discounts.length)];
+    const price = Math.round(key.price);
+    const discountPrice = Math.round((price * (100 - dis)) / 100);
 
     const obj = {
       title: key.title,
       description: key.description,
-      price: key.price,
+      price,
       countRatings: key.rating.count,
       ratings: key.rating.rate,
       images: imageLinks,
@@ -30,6 +43,7 @@ exports.createProduct = catchAsyncErrors(async (req, res, next) => {
       Stock: stock,
       brand: brand,
       discount: dis,
+      discountPrice,
     };
     products.push(await Product.create(obj));
   }
@@ -43,7 +57,7 @@ exports.createProduct = catchAsyncErrors(async (req, res, next) => {
 //Get All Products
 exports.getAllProducts = catchAsyncErrors(async (req, res) => {
   const productsCount = await Product.countDocuments();
-  const resultPerPage = 20;
+  const resultPerPage = 24;
   const features = new ApiFeatures(Product.find(), req.query).search().filter();
 
   let products = await features.query;
