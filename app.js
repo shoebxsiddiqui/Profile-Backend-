@@ -3,12 +3,16 @@ const cookieParser = require("cookie-parser");
 const errorMiddleware = require("./Middleware/error");
 const dotenv = require("dotenv");
 const app = express();
+const cors = require("cors");
 
 // config
 dotenv.config({ path: "config/config.env" });
 
 app.use(express.json());
 app.use(cookieParser());
+cors({
+  origin: "*",
+});
 
 // Route Imports
 // const product = require("./routes/productRoute");
