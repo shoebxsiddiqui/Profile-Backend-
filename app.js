@@ -10,9 +10,11 @@ dotenv.config({ path: "config/config.env" });
 
 app.use(express.json());
 app.use(cookieParser());
-cors({
-  origin: "*",
-});
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 // Route Imports
 // const product = require("./routes/productRoute");
