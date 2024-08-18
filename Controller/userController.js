@@ -54,6 +54,7 @@ exports.logout = catchAsyncErrors(async (req, res, next) => {
     secure: true,
     sameSite: "none", // if they are on the same domain, set this to 'strict'
     path: "/",
+    domain: "bwxw.onrender.com",
   });
 
   res.status(200).json({
