@@ -6,13 +6,14 @@ const app = express();
 const cors = require("cors");
 
 // config
-dotenv.config({ path: "config/config.env" });
+dotenv.config();
 
 app.use(express.json());
 app.use(cookieParser());
+
 app.use(
   cors({
-    origin: process.env.ORIGIN_URL, // Replace with your actual frontend domain
+    origin: process.env.FRONTEND_URL, // Replace with your actual frontend domain
     credentials: true,
   })
 );
