@@ -9,8 +9,6 @@ const sendToken = (user, statusCode, res) => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
-    path: "/",
-    domain: "bwxw.onrender.com",
   };
 
   res.status(statusCode).cookie("token", token).json({
