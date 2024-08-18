@@ -8,16 +8,6 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
   let public_id = "jjj";
   let secure_url = "jjj";
 
-  //   if (typeof req.body.avatar === "string") {
-  //     const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-  //       folder: "avatars",
-  //       width: 150,
-  //       crop: "scale",
-  //     });
-  //     public_id = myCloud.public_id;
-  //     secure_url = myCloud.secure_url;
-  //   }
-
   const { name, email, password, phone_no } = req.body;
   const user = await User.create({
     name,
@@ -46,7 +36,6 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   if (!user) {
     return next(new ErrorHandler("Invalid Enail or Password", 401));
   }
-  console.log(user);
 
   const isPasswordMatched = await user.comparePassword(password);
 
@@ -61,7 +50,8 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
 exports.logout = catchAsyncErrors(async (req, res, next) => {
   res.cookie("token", null, {
     expires: new Date(Date.now()),
-    httpOnly: true,
+    secure: true, // Set to true if using HTTPS/
+    sameSite: "None", // Required if using cross-origin requests
   });
 
   res.status(200).json({
