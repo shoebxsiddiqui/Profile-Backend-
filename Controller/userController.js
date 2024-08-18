@@ -44,10 +44,13 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   }
 
   sendToken(user, 200, res);
+
+  console.log(res);
 });
 
 //Logout User
 exports.logout = catchAsyncErrors(async (req, res, next) => {
+  console.log(req);
   res.cookie("token", null, {
     expires: new Date(Date.now()),
     httpOnly: true,
