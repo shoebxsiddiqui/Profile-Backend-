@@ -1,3 +1,5 @@
+const jwt = require("jsonwebtoken");
+
 //Creating token and saving in cookie
 const sendToken = (user, statusCode, res) => {
   const token = user.getJWTToken();
@@ -18,4 +20,9 @@ const sendToken = (user, statusCode, res) => {
   });
 };
 
-module.exports = sendToken;
+const getId = (token) => {
+  const { id } = jwt.verify(token, process.env.JWT_SECRET);
+  return id;
+};
+
+module.exports = { sendToken, getId };
