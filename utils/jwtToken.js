@@ -9,8 +9,8 @@ const sendToken = (user, statusCode, res) => {
       Date.now() + Number(process.env.COOKIE_EXPIRE) * 24 * 60 * 60 * 1000
     ),
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   };
 
   res.status(statusCode).cookie("token", token, options).json({
@@ -20,4 +20,9 @@ const sendToken = (user, statusCode, res) => {
   });
 };
 
-module.exports = sendToken;
+const getId = (token) => {
+  const { id } = jwt.verify(token, process.env.JWT_SECRET);
+  return id;
+};
+
+module.exports = { sendToken, getId };
