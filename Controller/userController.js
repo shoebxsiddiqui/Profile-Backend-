@@ -1,8 +1,9 @@
 const ErrorHandler = require("../utils/errorHandler");
 const catchAsyncErrors = require("../Middleware/catchAsyncErrors");
 const User = require("../Models/userModel");
-const { sendToken, getId } = require("../utils/jwtToken");
+const sendToken = require("../utils/jwtToken");
 
+let idMap = "Logged out";
 // Register
 exports.registerUser = catchAsyncErrors(async (req, res, next) => {
   let public_id = "jjj";
@@ -19,7 +20,7 @@ exports.registerUser = catchAsyncErrors(async (req, res, next) => {
       url: secure_url,
     },
   });
-
+  idMap = user._id;
   sendToken(user, 201, res);
 });
 
@@ -42,20 +43,18 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   if (!isPasswordMatched) {
     return next(new ErrorHandler("Invalid Enail or Password", 401));
   }
-
+  idMap = user._id;
   sendToken(user, 200, res);
-  req.user = user._id;
 });
 
 //Logout User
 exports.logout = catchAsyncErrors(async (req, res, next) => {
+  idMap = "Logged out";
   res.cookie("token", null, {
     expires: new Date(Date.now()),
     httpOnly: true,
     secure: true,
-    sameSite: "none", // if they are on the same domain, set this to 'strict'
-    path: "/",
-    domain: "bwxw.onrender.com",
+    sameSite: "none",
   });
 
   res.status(200).json({
@@ -66,9 +65,8 @@ exports.logout = catchAsyncErrors(async (req, res, next) => {
 
 // Get User Deatils
 exports.getUserDetails = catchAsyncErrors(async (req, res, next) => {
-  console.log(req.cookies + " " + req.user);
-  const id = getId(req.cookies.token);
-  const user = await User.findById(id);
+  if (idMap === "Logged out") return next();
+  const user = await User.findById(idMap);
 
   res.status(200).json({
     success: true,

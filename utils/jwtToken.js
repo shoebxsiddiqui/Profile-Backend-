@@ -20,9 +20,4 @@ const sendToken = (user, statusCode, res) => {
   });
 };
 
-const getId = (token) => {
-  const { id } = jwt.verify(token, process.env.JWT_SECRET);
-  return id;
-};
-
-module.exports = { sendToken, getId };
+module.exports = sendToken;
