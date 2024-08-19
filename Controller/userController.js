@@ -44,6 +44,7 @@ exports.loginUser = catchAsyncErrors(async (req, res, next) => {
   }
 
   sendToken(user, 200, res);
+  req.user = user._id;
 });
 
 //Logout User
@@ -65,6 +66,7 @@ exports.logout = catchAsyncErrors(async (req, res, next) => {
 
 // Get User Deatils
 exports.getUserDetails = catchAsyncErrors(async (req, res, next) => {
+  console.log(req.cookies + " " + req.user);
   const id = getId(req.cookies.token);
   const user = await User.findById(id);
 
